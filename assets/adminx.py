@@ -4,7 +4,7 @@
 # create_time : 2017/3/18 16:01
 # --------------------------------
 import xadmin
-from assets.models import Group, Asset, IDC
+from assets.models import Project, Asset, IDC
 from xadmin import views
 
 
@@ -19,18 +19,18 @@ class GlobalSettings(object):
     menu_style = u'accordion'
 
 
-class GroupAdmin(object):
-    list_display = ['name', 'project', 'date_added', 'comment']
-    search_fields = ['name', 'project', 'comment']
-    list_filter = ['name', 'project', 'date_added', 'comment']
+class ProjectAdmin(object):
+    list_display = ['name', 'leader', 'start_time', 'comment',]
+    search_fields = ['name', 'leader', 'comment',]
+    list_filter = ['name', 'leader', 'start_time', 'comment',]
 
 
 class AssetAdmin(object):
-    list_display = ['intranet_ip', 'hostname', 'group', 'username', 'system_type', 'system_arch', 'status', 'env',
+    list_display = ['intranet_ip', 'hostname', 'project', 'username', 'system_type', 'system_arch', 'status', 'env',
                     'idc', 'date_added']
-    search_fields = ['intranet_ip', 'hostname', 'group', 'username', 'system_type', 'system_arch', 'status', 'env',
+    search_fields = ['intranet_ip', 'hostname', 'project', 'username', 'system_type', 'system_arch', 'status', 'env',
                      'idc']
-    list_filter = ['intranet_ip', 'hostname', 'group', 'username', 'system_type', 'system_arch', 'status', 'env',
+    list_filter = ['intranet_ip', 'hostname', 'project', 'username', 'system_type', 'system_arch', 'status', 'env',
                    'idc', 'date_added']
 
 
@@ -40,7 +40,7 @@ class IDCAdmin(object):
     list_filter = ['name', 'address', 'network', 'date_added', 'contact_person', 'phone']
 
 
-xadmin.site.register(Group, GroupAdmin)
+xadmin.site.register(Project, ProjectAdmin)
 xadmin.site.register(Asset, AssetAdmin)
 xadmin.site.register(IDC, IDCAdmin)
 xadmin.site.register(views.BaseAdminView, BaseSetting)

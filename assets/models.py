@@ -2,12 +2,15 @@
 
 from __future__ import unicode_literals
 
+
+from datetime import datetime
 from django.db import models
 
 # Create your models here.
 ASSET_ENV = (
-    (1, u'生产环境'),
-    (2, u'测试环境')
+    ('prod', u'生产环境'),
+    ('test', u'测试环境'),
+    ('dev', u'开发环境'),
 )
 
 ASSET_STATUS = (
@@ -32,17 +35,18 @@ GROUP_TYPE = (
 )
 
 
-class Group(models.Model):
-    name = models.CharField(max_length=80, unique=True, verbose_name=u'组名')
-    project = models.CharField(max_length=80, blank=True, null=True, verbose_name=u'项目名')
+class Project(models.Model):
+    name = models.CharField(max_length=80, unique=True, verbose_name=u'项目组名')
+    leader = models.CharField(max_length=32, verbose_name=u'项目负责人')
+    start_time = models.DateTimeField(default=datetime.now, verbose_name=u'项目发起时间')
     comment = models.CharField(max_length=160, blank=True, null=True, verbose_name='备注')
-    date_added = models.DateField(auto_now=True, null=True, verbose_name=u'添加时间')
+    time_modify = models.DateTimeField(auto_now=True, verbose_name=u'最后修改时间')
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        verbose_name = u'资产组'
+        verbose_name = u'项目组'
         verbose_name_plural = verbose_name
 
 
@@ -52,7 +56,7 @@ class IDC(models.Model):
     phone = models.CharField(max_length=32, blank=True, null=True, default='', verbose_name=u'联系电话')
     address = models.CharField(max_length=128, blank=True, null=True, default='', verbose_name=u"机房地址")
     network = models.TextField(blank=True, null=True, default='', verbose_name=u"IP地址段")
-    date_added = models.DateField(auto_now=True, null=True, verbose_name=u'创建时间')
+    date_added = models.DateField(default = datetime.now, null=True, verbose_name=u'创建时间')
     operator = models.CharField(max_length=32, blank=True, default='', null=True, verbose_name=u"运营商")
     comment = models.CharField(max_length=128, blank=True, default='', null=True, verbose_name=u"备注")
 
@@ -68,7 +72,7 @@ class Asset(models.Model):
     intranet_ip = models.GenericIPAddressField(blank=True, null=True, verbose_name=u"内网IP")
     internet_ip = models.GenericIPAddressField(max_length=255, blank=True, null=True, verbose_name=u"外网IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
-    group = models.ForeignKey(Group, blank=True, verbose_name=u"所属主机组")
+    project = models.ForeignKey(Project, verbose_name=u"所属项目")
     username = models.CharField(max_length=16, blank=True, null=True, verbose_name=u"管理用户名")
     password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
     idc = models.ForeignKey(IDC, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'机房')
@@ -82,7 +86,7 @@ class Asset(models.Model):
     number = models.CharField(max_length=32, blank=True, null=True, verbose_name=u'资产编号')
     status = models.IntegerField(choices=ASSET_STATUS, blank=True, null=True, default=1, verbose_name=u"机器状态")
     asset_type = models.IntegerField(choices=ASSET_TYPE, blank=True, null=True, verbose_name=u"主机类型")
-    env = models.IntegerField(choices=ASSET_ENV, blank=True, null=True, verbose_name=u"运行环境")
+    env = models.CharField(max_length=5, choices=ASSET_ENV, blank=True, null=True, verbose_name=u"运行环境")
     date_added = models.DateTimeField(auto_now=True, null=True, verbose_name=u'录入时间')
     is_active = models.BooleanField(default=True, verbose_name=u"是否激活")
     comment = models.CharField(max_length=128, blank=True, null=True, verbose_name=u"备注")
